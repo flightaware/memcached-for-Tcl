@@ -1,4 +1,3 @@
-#!/usr/bin/tclsh
 
 load ./memcache[info sharedlibextension]
 

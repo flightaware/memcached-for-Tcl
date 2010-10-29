@@ -17,7 +17,7 @@ Memcache_Init(Tcl_Interp *interp)
   if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
     return TCL_ERROR;
   }
-  if (Tcl_PkgProvide(interp, "Memcache", "1.0") == TCL_ERROR) {
+  if (Tcl_PkgProvide(interp, "Memcache", PACKAGE_VERSION) == TCL_ERROR) {
     return TCL_ERROR;
   }
   memc = memcached_create(NULL);

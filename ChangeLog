@@ -1,0 +1,10 @@
+2010-10-28	Jeff Lawson <jeff@bovine.net>
+
+	Release of version 1.0.1
+
+	Reorganized code to use TEA 3.9 for configuration and building.
+
+2009-02-12	Jeff Lawson <jeff@bovine.net>
+
+	Initial release of version 1.0
+
