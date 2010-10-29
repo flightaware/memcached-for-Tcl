@@ -71,7 +71,7 @@ TEA_SETUP_COMPILER
 TEA_ADD_SOURCES([tclMemcache.c])
 #TEA_ADD_HEADERS([generic/tclMemcache.h])
 TEA_ADD_INCLUDES([])
-TEA_ADD_LIBS([])
+TEA_ADD_LIBS([-lmemcached -lsasl2])
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
 TEA_ADD_TCL_SOURCES([])
@@ -88,6 +88,11 @@ TEA_ADD_TCL_SOURCES([])
 #
 # TEA_ADD_* any platform specific compiler/build info here.
 #--------------------------------------------------------------------
+
+AC_CHECK_HEADER(libmemcached/memcached.h,,[
+	AC_MSG_FAILURE([Could not find libmemcached headers])
+])
+
 
 if test "${TEA_PLATFORM}" = "windows" ; then
     AC_DEFINE(BUILD_tcl_memcache, 1, [Build windows export dll])
@@ -173,10 +178,13 @@ TEA_MAKE_LIB
 TEA_PROG_TCLSH
 #TEA_PROG_WISH
 
+
+# TODO: way may want to bundle libmemcached in the future
+#AC_CONFIG_SUBDIRS([libmemcached-0.44])
+
 #--------------------------------------------------------------------
 # Finally, substitute all of the various values into the Makefile.
 # You may alternatively have a special pkgIndex.tcl.in or other files
 # which require substituting th AC variables in.  Include these here.
 #--------------------------------------------------------------------
-
 AC_OUTPUT([Makefile pkgIndex.tcl])
