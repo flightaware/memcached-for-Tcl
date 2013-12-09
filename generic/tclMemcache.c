@@ -12,7 +12,6 @@ static inline memcached_st* get_memc()
   static __thread memcached_st *memc = NULL;
   if (memc == NULL)
   {
-    fprintf(stderr, "New memcached structure initialzed.\n");
     memc = memcached_create(NULL);
   }    
   return memc;
