@@ -7,9 +7,15 @@
 
 static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj * CONST objv[]);
 
-
-static memcached_st *memc = NULL;
-
+static inline memcached_st* get_memc()
+{
+  static __thread memcached_st *memc = NULL;
+  if (memc == NULL)
+  {
+    memc = memcached_create(NULL);
+  }    
+  return memc;
+}
 
 int DLLEXPORT
 Memcache_Init(Tcl_Interp *interp)
@@ -20,7 +26,7 @@ Memcache_Init(Tcl_Interp *interp)
   if (Tcl_PkgProvide(interp, "Memcache", PACKAGE_VERSION) == TCL_ERROR) {
     return TCL_ERROR;
   }
-  memc = memcached_create(NULL);
+  get_memc();
   Tcl_CreateObjCommand(interp, "memcache", Memcache_Cmd, NULL, NULL);
   return TCL_OK;
 }
@@ -61,7 +67,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
       return TCL_ERROR;
     }
     if (!strcmp(Tcl_GetString(objv[2]), "add")) {
-      result = memcached_server_add(memc, Tcl_GetString(objv[3]), atoi(Tcl_GetString(objv[4])));
+      result = memcached_server_add(get_memc(), Tcl_GetString(objv[3]), atoi(Tcl_GetString(objv[4])));
     } else if (!strcmp(Tcl_GetString(objv[2]), "delete")) {
       // TODO: not supported
       //mc_server_delete(mc, mc_server_find(mc, Tcl_GetString(objv[3]), 0));
@@ -75,7 +81,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
       return TCL_ERROR;
     }
     key = Tcl_GetString(objv[2]);
-    data = memcached_get(memc, key, strlen(key), &size, &flags, &result);
+    data = memcached_get(get_memc(), key, strlen(key), &size, &flags, &result);
     fprintf(stderr, "result=%d\n", result);
     if (data != NULL) {
       Tcl_SetVar2Ex(interp, Tcl_GetString(objv[3]), NULL, Tcl_NewByteArrayObj((uint8_t*)data, size), 0);
@@ -108,16 +114,16 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     }
     switch (cmd) {
     case cmdAdd:
-      result = memcached_add(memc, key, strlen(key), data, size, expires, flags);
+      result = memcached_add(get_memc(), key, strlen(key), data, size, expires, flags);
       break;
     case cmdAppend:
-      result = memcached_append(memc, key, strlen(key), data, size, expires, flags);
+      result = memcached_append(get_memc(), key, strlen(key), data, size, expires, flags);
       break;
     case cmdSet:
-      result = memcached_set(memc, key, strlen(key), data, size, expires, flags);
+      result = memcached_set(get_memc(), key, strlen(key), data, size, expires, flags);
       break;
     case cmdReplace:
-      result = memcached_replace(memc, key, strlen(key), data, size, expires, flags);
+      result = memcached_replace(get_memc(), key, strlen(key), data, size, expires, flags);
       break;
     }
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
@@ -132,7 +138,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     if (objc > 3) {
       expires = atoi(Tcl_GetString(objv[3]));
     }
-    result = memcached_delete(memc, key, strlen(key), expires);
+    result = memcached_delete(get_memc(), key, strlen(key), expires);
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
@@ -146,10 +152,10 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     size = atoi(Tcl_GetString(objv[3]));
     switch (cmd) {
     case cmdIncr:
-      result = memcached_increment(memc, key, strlen(key), size, &size64);
+      result = memcached_increment(get_memc(), key, strlen(key), size, &size64);
       break;
     case cmdDecr:
-      result = memcached_decrement(memc, key, strlen(key), size, &size64);
+      result = memcached_decrement(get_memc(), key, strlen(key), size, &size64);
       break;
     }
     if (result == 1 && objc > 4) {
