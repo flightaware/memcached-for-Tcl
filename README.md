@@ -27,21 +27,24 @@ the address of your local memcached servers.  If you have more than
 one memcached server then you can repeat the "memcache server" line
 for each additional server you have.
 
- package require Memcache
- memcache server add servername.example.com 11211
-
+```
+package require Memcache
+memcache server add servername.example.com 11211
+```
 
 To set a value into the memcached server, use the following syntax to
 define a key named "moo":
 
- memcache set moo "cows go moo"
-
+```
+memcache set moo "cows go moo"
+```
 
 To fetch this same value back from the memcached server and write it
 into the "result" variable, use this syntax:
 
- memcache get moo result
-
+```
+memcache get moo result
+```
 
 All of the memcache commands will return an integer code that is zero
 on success or some other integer error. If the returned value is
