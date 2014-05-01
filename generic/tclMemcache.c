@@ -82,7 +82,6 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     }
     key = Tcl_GetString(objv[2]);
     data = memcached_get(get_memc(), key, strlen(key), &size, &flags, &result);
-    fprintf(stderr, "result=%d\n", result);
     if (data != NULL) {
       Tcl_SetVar2Ex(interp, Tcl_GetString(objv[3]), NULL, Tcl_NewByteArrayObj((uint8_t*)data, size), 0);
       if (objc > 4) {
