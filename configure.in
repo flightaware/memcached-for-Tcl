@@ -71,7 +71,10 @@ TEA_SETUP_COMPILER
 TEA_ADD_SOURCES([tclMemcache.c])
 #TEA_ADD_HEADERS([generic/tclMemcache.h])
 TEA_ADD_INCLUDES([])
-TEA_ADD_LIBS([-lmemcached -lsasl2])
+TEA_ADD_LIBS([-lmemcached])
+if test $with_sasl != "no"; then
+    TEA_ADD_LIBS([-lsasl2])
+fi
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
 TEA_ADD_TCL_SOURCES([])
@@ -88,6 +91,11 @@ TEA_ADD_TCL_SOURCES([])
 #
 # TEA_ADD_* any platform specific compiler/build info here.
 #--------------------------------------------------------------------
+
+AC_ARG_WITH(sasl,
+            [  --with-sasl=DIR         Compile with libsasl2 in <DIR>],
+	        with_sasl="$withval",
+            with_sasl="yes")
 
 AC_CHECK_HEADER(libmemcached/memcached.h,,[
 	AC_MSG_FAILURE([Could not find libmemcached headers])
