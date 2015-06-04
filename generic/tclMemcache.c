@@ -165,12 +165,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     break;
 
   case cmdVersion:
-    /*
-    result = memcached_version(memc);    // TODO
-    if (data != NULL) {
-      Tcl_SetObjResult(interp, Tcl_NewStringObj(data, -1));
-    }
-    */
+    Tcl_SetObjResult(interp, Tcl_ObjPrintf("%s (with libmemcached %s)", PACKAGE_STRING, memcached_lib_version()));
     break;
 
   }
