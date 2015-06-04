@@ -37,7 +37,8 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
   memcached_return result;
   uint32_t flags = 0;
   char *key, *data = NULL;
-  uint32_t size, expires = 0;
+  size_t size;
+  uint32_t expires = 0;
   uint64_t size64;
   int cmd;
 
