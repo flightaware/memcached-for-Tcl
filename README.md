@@ -73,3 +73,4 @@ Available Commands
 
  memcache decr key value ?varname?
 
+ memcache version
