@@ -38,6 +38,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
   uint32_t flags = 0;
   char *key, *data = NULL;
   size_t size;
+  int isize;
   uint32_t expires = 0;
   uint64_t size64;
   int cmd;
@@ -105,7 +106,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
       return TCL_ERROR;
     }
     key = Tcl_GetString(objv[2]);
-    data = (char*)Tcl_GetByteArrayFromObj(objv[3], (int*)&size);
+    data = (char*)Tcl_GetByteArrayFromObj(objv[3], &isize);
     if (objc > 4) {
       expires = atoi(Tcl_GetString(objv[4]));
     }
@@ -114,16 +115,16 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     }
     switch (cmd) {
     case cmdAdd:
-      result = memcached_add(get_memc(), key, strlen(key), data, size, expires, flags);
+      result = memcached_add(get_memc(), key, strlen(key), data, isize, expires, flags);
       break;
     case cmdAppend:
-      result = memcached_append(get_memc(), key, strlen(key), data, size, expires, flags);
+      result = memcached_append(get_memc(), key, strlen(key), data, isize, expires, flags);
       break;
     case cmdSet:
-      result = memcached_set(get_memc(), key, strlen(key), data, size, expires, flags);
+      result = memcached_set(get_memc(), key, strlen(key), data, isize, expires, flags);
       break;
     case cmdReplace:
-      result = memcached_replace(get_memc(), key, strlen(key), data, size, expires, flags);
+      result = memcached_replace(get_memc(), key, strlen(key), data, isize, expires, flags);
       break;
     }
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
