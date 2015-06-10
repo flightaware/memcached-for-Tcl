@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <tcl.h>
 #include <libmemcached/memcached.h>
 
@@ -9,11 +11,20 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
 
 static inline memcached_st* get_memc()
 {
+  static __thread pid_t mempid = 0;
   static __thread memcached_st *memc = NULL;
-  if (memc == NULL)
-  {
+  if (memc == NULL) {
+    // first time being called, so allocate new handle.
     memc = memcached_create(NULL);
-  }    
+    mempid = getpid();
+  } else if (mempid != getpid()) {
+    // we must have forked, so allocate a new one, as a clone of the existing servers.
+    memcached_st *oldmemc = memc;
+    memc = memcached_clone(NULL, oldmemc);
+    memcached_free(oldmemc);
+    mempid = getpid();
+  }
+
   return memc;
 }
 
