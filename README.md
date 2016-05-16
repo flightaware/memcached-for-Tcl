@@ -13,8 +13,8 @@ document.
 
 
 On FreeBSD:
-* portinstall databases/libmemcached
-* env CPPFLAGS=-I/usr/local/include ./configure --with-tcl=/usr/local/lib/tcl8.5
+* pkg install databases/libmemcached
+* env CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure --with-tcl=/usr/local/lib/tcl8.6
 * make
 * make install
 
