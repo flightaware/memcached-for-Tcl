@@ -84,12 +84,17 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     } else if (!strcmp(Tcl_GetString(objv[2]), "delete")) {
       // TODO: not supported
       //mc_server_delete(mc, mc_server_find(mc, Tcl_GetString(objv[3]), 0));
+      Tcl_AppendResult(interp, "server delete not supported.", NULL);
+      return TCL_ERROR;
+    } else {
+      Tcl_AppendResult(interp, "server command not recognized.", NULL);
+      return TCL_ERROR;
     }
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
   case cmdGet:
-    if (objc < 4) {
+    if (objc < 4 || objc > 6) {
       Tcl_WrongNumArgs(interp, 2, objv, "key dataVar ?lengthVar? ?flagsVar?");
       return TCL_ERROR;
     }
@@ -112,7 +117,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
   case cmdSet:
   case cmdAppend:
   case cmdReplace:
-    if (objc < 4) {
+    if (objc < 4 || objc > 6) {
       Tcl_WrongNumArgs(interp, 2, objv, "key value ?expires? ?flags?");
       return TCL_ERROR;
     }
@@ -142,7 +147,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     break;
 
   case cmdDelete:
-    if (objc < 3) {
+    if (objc < 3 || objc > 4) {
       Tcl_WrongNumArgs(interp, 2, objv, "key ?expires?");
       return TCL_ERROR;
     }
@@ -156,7 +161,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
 
   case cmdIncr:
   case cmdDecr:
-    if (objc < 4) {
+    if (objc < 4 || objc > 5) {
       Tcl_WrongNumArgs(interp, 2, objv, "key value ?varname?");
       return TCL_ERROR;
     }
