@@ -75,7 +75,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
 
   switch (cmd) {
   case cmdServer:
-    if (objc < 5) {
+    if (objc != 5) {
       Tcl_WrongNumArgs(interp, 2, objv, "cmd server port");
       return TCL_ERROR;
     }
