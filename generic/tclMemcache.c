@@ -9,6 +9,9 @@
 
 static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj * CONST objv[]);
 
+/*
+ * Helper method that allocates/fetches the memcached instance associated with this thread.
+ */
 static inline memcached_st* get_memc()
 {
   static __thread pid_t mempid = 0;
@@ -28,6 +31,9 @@ static inline memcached_st* get_memc()
   return memc;
 }
 
+/*
+ * Library initialization function, which registers the commands into the Tcl interpreter.
+ */
 int DLLEXPORT
 Memcache_Init(Tcl_Interp *interp)
 {
@@ -42,7 +48,9 @@ Memcache_Init(Tcl_Interp *interp)
   return TCL_OK;
 }
 
-
+/*
+ * Handler for all commands invoked through the Tcl interpreter.
+ */
 static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj * CONST objv[])
 {
   memcached_return result;
@@ -54,6 +62,8 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
   uint64_t size64;
   int cmd;
 
+
+  // list of supported commands that we expose.
   enum {
     cmdGet, cmdAdd, cmdAppend, cmdSet, cmdReplace,
     cmdDelete, cmdIncr, cmdDecr, cmdVersion, cmdServer, cmdBehavior
@@ -118,7 +128,13 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
   }
 
   switch (cmd) {
+
   case cmdServer:
+    /*
+     * Server list manipulation:
+     *   - server add hostname port
+     *   - memcache server delete hostname port
+     */
     if (objc != 5) {
       Tcl_WrongNumArgs(interp, 2, objv, "cmd server port");
       return TCL_ERROR;
@@ -138,6 +154,10 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     break;
 
   case cmdGet:
+    /*
+     * Lookup and retrieve a cached value:
+     *  - memcache get key varname ?lengthVar? ?flagsVar?
+     */
     if (objc < 4 || objc > 6) {
       Tcl_WrongNumArgs(interp, 2, objv, "key dataVar ?lengthVar? ?flagsVar?");
       return TCL_ERROR;
@@ -157,10 +177,19 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
+    
   case cmdAdd:
   case cmdSet:
   case cmdAppend:
   case cmdReplace:
+    /*
+     * Store a new value into the cache:
+     *
+     * - memcache add key value ?expires? ?flags?
+     * - memcache append key value ?expires? ?flags?
+     * - memcache set key value ?expires? ?flags?
+     * - memcache replace key value ?expires? ?flags?
+     */
     if (objc < 4 || objc > 6) {
       Tcl_WrongNumArgs(interp, 2, objv, "key value ?expires? ?flags?");
       return TCL_ERROR;
@@ -190,7 +219,13 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
+    
   case cmdDelete:
+    /*
+     * Delete an existing value from the cache (if it exists):
+     *
+     * - memcache delete key ?expires?
+     */
     if (objc < 3 || objc > 4) {
       Tcl_WrongNumArgs(interp, 2, objv, "key ?expires?");
       return TCL_ERROR;
@@ -203,8 +238,15 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
+    
   case cmdIncr:
   case cmdDecr:
+    /*
+     * Increment or decrement a cached key containing a numeric value.
+     *
+     * - memcache incr key value ?varname?
+     * - memcache decr key value ?varname?
+     */
     if (objc < 4 || objc > 5) {
       Tcl_WrongNumArgs(interp, 2, objv, "key value ?varname?");
       return TCL_ERROR;
@@ -225,12 +267,21 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
+    
   case cmdVersion:
+    /*
+     * Return the version of this package and the library we've been built against.
+     */
     Tcl_SetObjResult(interp, Tcl_ObjPrintf("%s (with libmemcached %s)", PACKAGE_STRING, memcached_lib_version()));
     break;
 
 
   case cmdBehavior:
+    /*
+     * View or modify various configuration parameters that control network timeouts, replication, and more.
+     *
+     * - memcache behavior flagname ?flagvalue?
+     */
     if (objc < 3 || objc > 4) {
       Tcl_WrongNumArgs(interp, 2, objv, "flagname ?flagvalue?");
       return TCL_ERROR;

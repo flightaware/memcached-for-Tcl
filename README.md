@@ -55,7 +55,7 @@ varname arguments to have been modified.
 Available Commands
 ------------------
 
- memcache server add server port
+ memcache server add hostname port
 
  memcache get key varname ?lengthVar? ?flagsVar?
 
