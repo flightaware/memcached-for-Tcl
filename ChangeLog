@@ -1,9 +1,15 @@
+2016-06-01	Jeff Lawson <jeff@bovine.net>
+
+	Release of version 1.1.1
+
+	Officially license as BSD
+
 2016-05-17	Jeff Lawson <jeff@bovine.net>
 
 	Release of version 1.1.0
-	
+
 	Now includes a "behavior" command to allow getting/setting of various libmemcached configuration variables.
-	
+
 	More robust argument count checking for all commands.
 
 	FreeBSD build commands updated for Tcl 8.6
