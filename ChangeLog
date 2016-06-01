@@ -1,3 +1,17 @@
+2016-05-17	Jeff Lawson <jeff@bovine.net>
+
+	Release of version 1.1.0
+	
+	Now includes a "behavior" command to allow getting/setting of various libmemcached configuration variables.
+	
+	More robust argument count checking for all commands.
+
+	FreeBSD build commands updated for Tcl 8.6
+
+	Detect process forking and clone a new memcached structure.
+
+	Implement "memcache version" command.
+
 2010-10-28	Jeff Lawson <jeff@bovine.net>
 
 	Release of version 1.0.1
