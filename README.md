@@ -1,7 +1,8 @@
 memcached-for-Tcl
 =================
 
-memcached client library for Tcl based applications
+Memcached is a data caching service that can be used to accelerate computations or operations that are repeated
+frequently, but do not often change. This package provides a Tcl interface to the memcached servers.
 
 
 Installation
