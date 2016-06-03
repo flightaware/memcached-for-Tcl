@@ -173,6 +173,11 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
         Tcl_SetVar2Ex(interp, Tcl_GetString(objv[5]), NULL, Tcl_NewIntObj(flags), 0);
       }
       free(data);
+    } else {
+      // error occurred (no data returned), so ensure that result always reflects an error.
+      if (result == 0) {
+        result = MEMCACHED_FAILURE;
+      }
     }
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
