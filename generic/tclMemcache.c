@@ -165,7 +165,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     key = Tcl_GetString(objv[2]);
     data = memcached_get(get_memc(), key, strlen(key), &size, &flags, &result);
     if (data != NULL) {
-      Tcl_SetVar2Ex(interp, Tcl_GetString(objv[3]), NULL, Tcl_NewByteArrayObj((uint8_t*)data, size), 0);
+      Tcl_SetVar2Ex(interp, Tcl_GetString(objv[3]), NULL, Tcl_NewStringObj((const char *)data, size), 0);
       if (objc > 4) {
         Tcl_SetVar2Ex(interp, Tcl_GetString(objv[4]), NULL, Tcl_NewLongObj(size), 0);
       }
@@ -200,7 +200,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
       return TCL_ERROR;
     }
     key = Tcl_GetString(objv[2]);
-    data = (char*)Tcl_GetByteArrayFromObj(objv[3], &isize);
+    data = (char*)Tcl_GetStringFromObj(objv[3], &isize);
     if (objc > 4) {
       expires = atoi(Tcl_GetString(objv[4]));
     }
