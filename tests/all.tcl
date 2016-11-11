@@ -10,5 +10,14 @@ if {$value != "cows go moo"} {
     exit 1
 }
 
+set value "Boeing 777-200 (طائرة نفاثة ثنائية المحرك)"
+
+memcache set unicodeTest $value
+memcache get unicodeTest newvalue
+if {$value != $newvalue} {
+    puts "Error.  newvalue=$newvalue!\n";
+	exit 1
+}
+
 puts "Success"
 exit 0
