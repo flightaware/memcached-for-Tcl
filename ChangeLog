@@ -1,3 +1,9 @@
+2016-11-11	Jeff Lawson <jeff@bovine.net>
+
+	Release of version 1.2.0
+
+	Support Unicode strings as values for get/set/add/append/replace operations.
+
 2016-06-01	Jeff Lawson <jeff@bovine.net>
 
 	Release of version 1.1.1
