@@ -182,7 +182,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
-    
+
   case cmdAdd:
   case cmdSet:
   case cmdAppend:
@@ -224,7 +224,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
-    
+
   case cmdDelete:
     /*
      * Delete an existing value from the cache (if it exists):
@@ -243,36 +243,53 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
-    
+
   case cmdIncr:
   case cmdDecr:
     /*
      * Increment or decrement a cached key containing a numeric value.
      *
-     * - memcache incr key value ?varname?
-     * - memcache decr key value ?varname?
+     * - memcache incr key value ?varname? ?initial? ?expires?
+     * - memcache decr key value ?varname? ?initial? ?expires?
      */
-    if (objc < 4 || objc > 5) {
-      Tcl_WrongNumArgs(interp, 2, objv, "key value ?varname?");
+    if (objc < 4 || objc > 7) {
+      Tcl_WrongNumArgs(interp, 2, objv, "key value ?varname? ?initial? ?expires?");
       return TCL_ERROR;
     }
     key = Tcl_GetString(objv[2]);
-    size = atoi(Tcl_GetString(objv[3]));
+    size = atoi(Tcl_GetString(objv[3])); /* value to incr/decr by */
+    if (objc > 5) {   /* initial value if missing */
+      size64 = atoll(Tcl_GetString(objv[5]));
+    } else {
+      size64 = 0;
+    }
+    if (objc > 6) {   /* expiration */
+      expires = atoi(Tcl_GetString(objv[6]));
+    }
+
     switch (cmd) {
     case cmdIncr:
-      result = memcached_increment(get_memc(), key, strlen(key), size, &size64);
+      if (objc > 5) {
+	result = memcached_increment_with_initial(get_memc(), key, strlen(key), size, size64, expires, &size64);
+      } else {
+	result = memcached_increment(get_memc(), key, strlen(key), size, &size64);
+      }
       break;
     case cmdDecr:
-      result = memcached_decrement(get_memc(), key, strlen(key), size, &size64);
+      if (objc > 5) {
+	result = memcached_decrement_with_initial(get_memc(), key, strlen(key), size, size64, expires, &size64);
+      } else {
+	result = memcached_decrement(get_memc(), key, strlen(key), size, &size64);
+      }
       break;
     }
-    if (result == 1 && objc > 4) {
+    if (result == MEMCACHED_SUCCESS && objc > 4) {
       Tcl_SetVar2Ex(interp, Tcl_GetString(objv[4]), NULL, Tcl_NewLongObj(size64), 0);
     }
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
     break;
 
-    
+
   case cmdVersion:
     /*
      * Return the version of this package and the library we've been built against.

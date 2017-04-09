@@ -1,3 +1,11 @@
+2017-04-09	Jeff Lawson <jeff@bovine.net>
+
+	Release of version 1.2.1
+
+	Fix bug in incr/decr never returning the new value on success.
+
+	Support additional optional arguments to the incr/decr, which use memcached_increment_with_initial and memcached_decrement_with_initial internally when necessary. (Note: MEMCACHED_BEHAVIOR_BINARY_PROTOCOL must be enabled first before using the extra arguments.)
+
 2016-11-11	Jeff Lawson <jeff@bovine.net>
 
 	Release of version 1.2.0
