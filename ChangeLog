@@ -6,11 +6,19 @@
 
 	Support additional optional arguments to the incr/decr, which use memcached_increment_with_initial and memcached_decrement_with_initial internally when necessary. (Note: MEMCACHED_BEHAVIOR_BINARY_PROTOCOL must be enabled first before using the extra arguments.)
 
+2016-11-22	Danilo Chang <ray2501@gmail.com>
+
+	Add prepend and flush command
+
 2016-11-11	Jeff Lawson <jeff@bovine.net>
 
 	Release of version 1.2.0
 
 	Support Unicode strings as values for get/set/add/append/replace operations.
+
+2016-06-03	Jeff Lawson <jeff@bovine.net>
+
+	Ensure "get" always returns an error code is if memcached_get() returns N…ULL.
 
 2016-06-01	Jeff Lawson <jeff@bovine.net>
 

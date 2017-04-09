@@ -64,11 +64,15 @@ Available Commands
 
  memcache append key value ?expires? ?flags?
 
+ memcache prepend key value ?expires? ?flags?
+
  memcache set key value ?expires? ?flags?
 
  memcache replace key value ?expires? ?flags?
 
  memcache delete key ?expires?
+
+ memcache flush ?expires?
 
  memcache incr key value ?varname?
 

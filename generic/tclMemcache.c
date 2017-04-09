@@ -65,13 +65,13 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
 
   // list of supported commands that we expose.
   enum {
-    cmdGet, cmdAdd, cmdAppend, cmdSet, cmdReplace,
-    cmdDelete, cmdIncr, cmdDecr, cmdVersion, cmdServer, cmdBehavior
+    cmdGet, cmdAdd, cmdAppend, cmdPrepend, cmdSet, cmdReplace,
+    cmdDelete, cmdFlush, cmdIncr, cmdDecr, cmdVersion, cmdServer, cmdBehavior
   };
 
   static CONST char *sCmd[] = {
-    "get", "add", "append", "set", "replace",
-    "delete", "incr", "decr", "version", "server", "behavior",
+    "get", "add", "append", "prepend", "set", "replace",
+    "delete", "flush", "incr", "decr", "version", "server", "behavior",
     0
   };
 
@@ -186,12 +186,14 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
   case cmdAdd:
   case cmdSet:
   case cmdAppend:
+  case cmdPrepend:
   case cmdReplace:
     /*
      * Store a new value into the cache:
      *
      * - memcache add key value ?expires? ?flags?
      * - memcache append key value ?expires? ?flags?
+     * - memcache prepend key value ?expires? ?flags?
      * - memcache set key value ?expires? ?flags?
      * - memcache replace key value ?expires? ?flags?
      */
@@ -213,6 +215,9 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
       break;
     case cmdAppend:
       result = memcached_append(get_memc(), key, strlen(key), data, isize, expires, flags);
+      break;
+    case cmdPrepend:
+      result = memcached_prepend(get_memc(), key, strlen(key), data, isize, expires, flags);
       break;
     case cmdSet:
       result = memcached_set(get_memc(), key, strlen(key), data, isize, expires, flags);
@@ -244,6 +249,24 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     break;
 
 
+  case cmdFlush:
+    /*
+     * Wipe clean the contents of memcached servers:
+     *
+     * - memcache flush ?expires?
+     */
+    if (objc != 2 && objc != 3) {
+      Tcl_WrongNumArgs(interp, 2, objv, "?expires?");
+      return TCL_ERROR;
+    }
+    if (objc == 3) {
+      expires = atoi(Tcl_GetString(objv[2]));
+    }
+    result = memcached_flush(get_memc(), expires);
+    Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
+    break;
+
+    
   case cmdIncr:
   case cmdDecr:
     /*
