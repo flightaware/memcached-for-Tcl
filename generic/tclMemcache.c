@@ -132,22 +132,31 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
   case cmdServer:
     /*
      * Server list manipulation:
-     *   - server add hostname port
-     *   - memcache server delete hostname port
+     *   - memcache server add hostname port
+     *   - memcache server clear
      */
-    if (objc != 5) {
-      Tcl_WrongNumArgs(interp, 2, objv, "cmd server port");
+    if (objc < 3) {
+      Tcl_WrongNumArgs(interp, 2, objv, "(add|clear) ...");
       return TCL_ERROR;
     }
     if (!strcmp(Tcl_GetString(objv[2]), "add")) {
+      // adds a TCP memcache server
+      if (objc != 5) {
+        Tcl_WrongNumArgs(interp, 2, objv, "add hostname port");
+        return TCL_ERROR;
+      }
       result = memcached_server_add(get_memc(), Tcl_GetString(objv[3]), atoi(Tcl_GetString(objv[4])));
-    } else if (!strcmp(Tcl_GetString(objv[2]), "delete")) {
-      // TODO: not supported
-      //mc_server_delete(mc, mc_server_find(mc, Tcl_GetString(objv[3]), 0));
-      Tcl_AppendResult(interp, "server delete not supported.", NULL);
-      return TCL_ERROR;
+    } else if (!strcmp(Tcl_GetString(objv[2]), "clear")) {
+      // clear the entire memcache server list.
+      if (objc != 3) {
+        Tcl_WrongNumArgs(interp, 2, objv, "clear");
+        return TCL_ERROR;
+      }
+      // unfortunately cannot use memcached_servers_set_count because it is internal.
+      get_memc()->number_of_hosts = 0;
+      result = 0;
     } else {
-      Tcl_AppendResult(interp, "server command not recognized.", NULL);
+      Tcl_AppendResult(interp, "server subcommand not recognized.", NULL);
       return TCL_ERROR;
     }
     Tcl_SetObjResult(interp, Tcl_NewIntObj(result));
@@ -293,16 +302,16 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     switch (cmd) {
     case cmdIncr:
       if (objc > 5) {
-	result = memcached_increment_with_initial(get_memc(), key, strlen(key), size, size64, expires, &size64);
+        result = memcached_increment_with_initial(get_memc(), key, strlen(key), size, size64, expires, &size64);
       } else {
-	result = memcached_increment(get_memc(), key, strlen(key), size, &size64);
+        result = memcached_increment(get_memc(), key, strlen(key), size, &size64);
       }
       break;
     case cmdDecr:
       if (objc > 5) {
-	result = memcached_decrement_with_initial(get_memc(), key, strlen(key), size, size64, expires, &size64);
+        result = memcached_decrement_with_initial(get_memc(), key, strlen(key), size, size64, expires, &size64);
       } else {
-	result = memcached_decrement(get_memc(), key, strlen(key), size, &size64);
+        result = memcached_decrement(get_memc(), key, strlen(key), size, &size64);
       }
       break;
     }
