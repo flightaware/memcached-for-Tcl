@@ -58,6 +58,8 @@ Available Commands
 
  memcache server add hostname port
 
+ memcache server clear
+
  memcache get key varname ?lengthVar? ?flagsVar?
 
  memcache add key value ?expires? ?flags?
