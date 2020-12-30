@@ -1,3 +1,5 @@
+![Linux CI](https://github.com/bovine/memcached-for-Tcl/workflows/Linux%20CI/badge.svg)
+
 memcached-for-Tcl
 =================
 
