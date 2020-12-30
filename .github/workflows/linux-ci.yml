@@ -36,7 +36,7 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Start memcached for tests
-      run: /etc/init.d/memcached start
+      run: sudo /etc/init.d/memcached start
 
     # Runs a single command using the runners shell
     - name: Tests
