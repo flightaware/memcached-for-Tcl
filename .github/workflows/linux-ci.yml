@@ -24,7 +24,7 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Install dependencies
-      run: sudo apt-get install -y tcl8.6-dev libmemcached-dev memcached systemctl
+      run: sudo apt-get install -y tcl8.6-dev libmemcached-dev memcached
       
     # Runs a set of commands using the runners shell
     - name: Build
@@ -35,8 +35,8 @@ jobs:
         sudo make install
 
     # Runs a single command using the runners shell
-    - name: Start memcached
-      run: systemctl start memcached.service
+    - name: Start memcached for tests
+      run: /etc/init.d/memcached start
 
     # Runs a single command using the runners shell
     - name: Tests
