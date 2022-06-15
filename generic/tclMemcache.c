@@ -152,8 +152,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
         Tcl_WrongNumArgs(interp, 2, objv, "clear");
         return TCL_ERROR;
       }
-      // unfortunately cannot use memcached_servers_set_count because it is internal.
-      get_memc()->number_of_hosts = 0;
+      memcached_servers_reset(get_memc());
       result = 0;
     } else {
       Tcl_AppendResult(interp, "server subcommand not recognized.", NULL);
