@@ -7,6 +7,22 @@ if {$result} {
     puts "memcache server add: [memcache strerror $result]"
     exit 1
 }
+
+# Clear server list just to make sure.
+set result [memcache server clear]
+if {$result} {
+    puts "memcache server clear: [memcache strerror $result]"
+    exit 1
+}
+
+# add again
+set result [memcache server add localhost 11211]
+if {$result} {
+    puts "memcache server add: [memcache strerror $result]"
+    exit 1
+}
+
+# actually test something
 set result [memcache set moo "cows go moo"]
 if {$result} {
     puts "memcache set: [memcache strerror $result]"
