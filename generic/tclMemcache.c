@@ -61,17 +61,20 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
   uint32_t expires = 0;
   uint64_t size64;
   int cmd;
+  int errorcode;
 
 
   // list of supported commands that we expose.
   enum {
     cmdGet, cmdAdd, cmdAppend, cmdPrepend, cmdSet, cmdReplace,
-    cmdDelete, cmdFlush, cmdIncr, cmdDecr, cmdVersion, cmdServer, cmdBehavior
+    cmdDelete, cmdFlush, cmdIncr, cmdDecr, cmdVersion, cmdServer, cmdBehavior,
+    cmdStringError
   };
 
   static CONST char *sCmd[] = {
     "get", "add", "append", "prepend", "set", "replace",
     "delete", "flush", "incr", "decr", "version", "server", "behavior",
+    "strerror",
     0
   };
 
@@ -349,6 +352,20 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
       uint64_t currentVal = memcached_behavior_get(get_memc(), cmd);
       Tcl_SetObjResult(interp, Tcl_NewWideIntObj(currentVal));
     }
+  case cmdStringError:
+    /*
+     * Return the string associated with a libmemcached error code.
+     *
+     * - memcached strerror integer
+     */
+    if (objc != 3) {
+      Tcl_WrongNumArgs(interp, 2, objv, "errorcode");
+      return TCL_ERROR;
+    }
+    if (Tcl_GetIntFromObj(interp, objv[2], &errorcode) != TCL_OK) {
+      return TCL_ERROR;
+    }
+    Tcl_SetObjResult(interp, memcached_strerror(get_memc(), errorcode));
   }
   return TCL_OK;
 }

@@ -12,9 +12,12 @@ The actual memcached server installation is independent of the
 installation of this client package and is not addressed by this
 document.
 
+The underlying libmemcached installation recommended is awesomized/libmemcached
+because the official libmemcached has not had a release since 2014 and there are
+crashing bugs that have had fixes provided that haven't been rolled up into a release.
 
 On FreeBSD:
-* pkg install databases/libmemcached
+* install git@github.com:awesomized/libmemcached.git
 * env CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure --with-tcl=/usr/local/lib/tcl8.6
 * make
 * make install
