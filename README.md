@@ -55,6 +55,8 @@ on success or some other integer error. If the returned value is
 non-zero then the request failed, and you should not expect any 
 varname arguments to have been modified.
 
+Use `memcache strerror` to get a human readable version of the error code.
+
 
 Available Commands
 ------------------
@@ -86,3 +88,5 @@ Available Commands
  memcache version
 
  memcache behavior flagname ?flagvalue?
+
+ memcache strerror errorcode
