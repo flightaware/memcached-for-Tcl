@@ -365,7 +365,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
     if (Tcl_GetIntFromObj(interp, objv[2], &errorcode) != TCL_OK) {
       return TCL_ERROR;
     }
-    Tcl_SetObjResult(interp, memcached_strerror(get_memc(), errorcode));
+    Tcl_SetResult(interp, memcached_strerror(get_memc(), errorcode), TCL_VOLATILE);
   }
   return TCL_OK;
 }
