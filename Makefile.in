@@ -116,6 +116,9 @@ TCL_SRC_DIR	= @TCL_SRC_DIR@
 #TK_BIN_DIR	= @TK_BIN_DIR@
 #TK_SRC_DIR	= @TK_SRC_DIR@
 
+# If this isn't set, resetting it later on will break things
+@LD_LIBRARY_PATH_VAR@ ?= /usr/lib:/usr/local/lib
+
 # Not used, but retained for reference of what libs Tcl required
 #TCL_LIBS	= @TCL_LIBS@
 

@@ -1,4 +1,5 @@
-pkg install databases/libmemcached
+#pkg install databases/libmemcached
+echo install git@github.com:awesomized/libmemcached.git
 
 env CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure --with-tcl=/usr/local/lib/tcl8.6
 
