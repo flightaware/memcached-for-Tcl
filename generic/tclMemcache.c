@@ -352,6 +352,9 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
       uint64_t currentVal = memcached_behavior_get(get_memc(), cmd);
       Tcl_SetObjResult(interp, Tcl_NewWideIntObj(currentVal));
     }
+    break;
+
+
   case cmdStringError:
     /*
      * Return the string associated with a libmemcached error code.
@@ -366,6 +369,7 @@ static int Memcache_Cmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj *
       return TCL_ERROR;
     }
     Tcl_SetResult(interp, memcached_strerror(get_memc(), errorcode), TCL_VOLATILE);
+    break;
   }
   return TCL_OK;
 }
